@@ -2,6 +2,8 @@
 
 set -e
 
+MYPWD=`pwd`
+
 if [ ! -d /tmp/postal-api/.git ];
 then
   git clone git@github.com:atech/postal-api /tmp/postal-api

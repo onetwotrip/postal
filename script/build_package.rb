@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
 # This script will build a tgz file containing a copy of Postal with the assets
-# ready to go. It will then upload the file to a web server where it can be
-# accessed for users who wish to install or upgrade their postal installations.
+# ready to go.
 #
 # This script will only be used by the Postal build manager so it's likely of
 # little use to most people.
@@ -14,7 +13,7 @@ require 'fileutils'
 ROOT = Pathname.new(File.expand_path('../../', __FILE__))
 BUILD_ROOT = Pathname.new("/tmp/postal-build")
 WC_PATH = BUILD_ROOT.join('wc')
-PACKAGE_PATH = BUILD_ROOT.join('package.tgz')
+
 CHANNEL = ARGV[0]
 
 unless ['beta', 'stable'].include?(CHANNEL)
@@ -48,23 +47,10 @@ puts "\e[44;37mInstalling configuration\e[0m"
 system!("cd #{WC_PATH} && ./bin/postal initialize-config")
 
 # Get the last commit reference for the version file
-last_commit = `git -C #{WC_PATH} log --pretty=oneline -n 1`.split(/\s+/, 2).first[0,10]
+last_commit = `cd #{ROOT} && git rev-parse --short HEAD | tr -d '\n'`
 puts "\e[34mGot latest commit was #{last_commit}\e[0m"
 
-# Read the version file for the version number so we it put it in the build
-# package filename and update the version file to include the REVISION and
-# CHANNEL for this build.
-version_file = File.read("#{WC_PATH}/lib/postal/version.rb")
-if version_file =~ /VERSION = '(.*)'/
-  version = $1.to_s
-  puts "\e[34mGot version as #{version}\e[0m"
-else
-  puts "Could not determine version from version file"
-  exit 1
-end
-version_file.gsub!("REVISION = nil", "REVISION = '#{last_commit}'")
-version_file.gsub!("CHANNEL = 'dev'", "CHANNEL = '#{CHANNEL}'")
-File.open("#{WC_PATH}/lib/postal/version.rb", 'w') { |f| f.write(version_file) }
+PACKAGE_PATH = BUILD_ROOT.join("postal-ott-#{last_commit}.tgz")
 
 # Compile all the assets
 unless ENV['NO_ASSETS']
@@ -88,23 +74,3 @@ system!("rm -Rf #{WC_PATH}/tmp")
 puts "\e[44;37mCreating build package\e[0m"
 system("tar cpzf #{PACKAGE_PATH} -C #{WC_PATH} .")
 puts "\e[32mCreated build at #{PACKAGE_PATH}\e[0m"
-
-# What's our filename? This is our filename.
-filename = "postal-#{version}-#{last_commit}.tgz"
-
-# Upload the package to the distribution server and symlink it to latest
-# for the appropriate channel.
-require 'net/ssh'
-require 'net/scp'
-Net::SSH.start("postal.atech.media") do |ssh|
-  ssh.exec!("rm -Rf /var/www/postal/packages/#{CHANNEL}/#{filename}")
-  puts "Uploading..."
-  ssh.scp.upload!(PACKAGE_PATH.to_s, "/var/www/postal/packages/#{CHANNEL}/#{filename}")
-  puts "Making latest..."
-  ssh.exec!("rm -Rf /var/www/postal/packages/#{CHANNEL}/latest.tgz")
-  ssh.exec!("ln -s /var/www/postal/packages/#{CHANNEL}/#{filename} /var/www/postal/packages/#{CHANNEL}/latest.tgz")
-end
-
-puts "\e[32mDone. Package is live at https://postal.atech.media/packages/#{CHANNEL}/latest.tgz\e[0m"
-
-# Yay. We're done.
