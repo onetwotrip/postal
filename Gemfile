@@ -30,6 +30,7 @@ gem 'jwt'
 gem 'createsend', '~> 4.0'
 gem 'acme-client'
 gem 'highline', :require => true
+gem 'mini_racer', platforms: :ruby
 
 group :development, :assets do
   gem 'sass-rails', '~> 5.0'
