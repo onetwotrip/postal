@@ -49,14 +49,22 @@ module Postal
           set_process_name
           start_time = Time.now
           Thread.current[:job_id] = message['id']
-          logger.info "[#{message['id']}] Started processing \e[34m#{message['class_name']}\e[0m job"
+          if Postal.config.logging.json_format
+            logger.info "[#{message['id']}] Started processing #{message['class_name']} job"
+          else
+            logger.info "[#{message['id']}] Started processing \e[34m#{message['class_name']}\e[0m job"
+          end
           begin
             klass = message['class_name'].constantize.new(message['id'], message['params'])
             klass.perform
             GC.start
           rescue => e
             klass.on_error(e) if defined?(klass)
-            logger.warn "[#{message['id']}] \e[31m#{e.class}: #{e.message}\e[0m"
+            if Postal.config.logging.json_format
+              logger.warn "[#{message['id']}] #{e.class}: #{e.message}"
+            else
+              logger.warn "[#{message['id']}] \e[31m#{e.class}: #{e.message}\e[0m"
+            end
             e.backtrace.each do |line|
               logger.warn "[#{message['id']}]    " + line
             end
@@ -64,7 +72,11 @@ module Postal
               Raven.capture_exception(e, :extra => {:job_id => message['id']})
             end
           ensure
-            logger.info "[#{message['id']}] Finished processing \e[34m#{message['class_name']}\e[0m job in #{Time.now - start_time}s"
+            if Postal.config.logging.json_format
+              logger.info "[#{message['id']}] Finished processing #{message['class_name']} job in #{Time.now - start_time}s"
+            else
+              logger.info "[#{message['id']}] Finished processing \e[34m#{message['class_name']}\e[0m job in #{Time.now - start_time}s"
+            end
           end
         end
       ensure
@@ -88,7 +100,11 @@ module Postal
           receive_job(delivery_info, properties, body)
         end
         @active_queues[queue] = consumer
-        logger.info "Joined \e[32m#{queue}\e[0m queue"
+        if Postal.config.logging.json_format
+          logger.info "Joined #{queue} queue"
+        else
+          logger.info "Joined \e[32m#{queue}\e[0m queue"
+        end
       end
     end
 
@@ -96,7 +112,11 @@ module Postal
       if consumer = @active_queues[queue]
         consumer.cancel
         @active_queues.delete(queue)
-        logger.info "Left \e[32m#{queue}\e[0m queue"
+        if Postal.config.logging.json_format
+          logger.info "Left #{queue} queue"
+        else
+          logger.info "Left \e[32m#{queue}\e[0m queue"
+        end
       else
         logger.info "Not joined #{queue} so cannot leave"
       end

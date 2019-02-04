@@ -1,3 +1,4 @@
+require 'json'
 require 'logger'
 
 module Postal
@@ -47,7 +48,11 @@ module Postal
       else
         proc_text = "[#{Process.pid}]"
       end
-      "#{proc_text} [#{time}] #{severity} -- : #{msg}\n"
+      if Postal.config.logging.json_format
+        JSON.dump(timestamp: time, pid: Process.pid, process: "#{ENV['PROC_NAME']}", severity: severity, message: msg) + "\n"
+      else
+        "#{proc_text} [#{time}] #{severity} -- : #{msg}\n"
+      end
     end
   end
 end
