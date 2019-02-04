@@ -28,3 +28,4 @@ public/assets
 vendor/bundle
 
 Procfile.local
+.idea

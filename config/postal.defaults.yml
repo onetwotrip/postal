@@ -18,6 +18,8 @@ web_server:
   bind_address: 127.0.0.1
   port: 5000
   max_threads: 5
+  control_address: 127.0.0.1
+  control_port: 9293
 
 fast_server:
   enabled: false
