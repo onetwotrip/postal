@@ -318,7 +318,11 @@ module Postal
         start_time = Time.now.to_f
         result = connection.query(query)
         time = Time.now.to_f - start_time
-        logger.debug "  \e[4;34mMessageDB Query (#{time.round(2)}s) \e[0m  \e[33m#{query}\e[0m"
+        if Postal.config.logging.json_format
+          logger.debug "  MessageDB Query (#{time.round(2)}s)   #{query}"
+        else
+          logger.debug "  \e[4;34mMessageDB Query (#{time.round(2)}s) \e[0m  \e[33m#{query}\e[0m"
+        end
         if time > 0.5 && query =~ /\A(SELECT|UPDATE|DELETE) /
           id = Nifty::Utils::RandomString.generate(:length => 6).upcase
           explain_result = ResultForExplainPrinter.new(connection.query("EXPLAIN #{query}"))

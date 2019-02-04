@@ -97,13 +97,21 @@ module Postal
                   # client's IP later. Delay the welcome process.
                   client = Client.new(nil)
                   if Postal.config.smtp_server.log_connect
-                    logger.debug "[#{client.id}] \e[35m   Connection opened from #{new_io.remote_address.ip_address}\e[0m"
+                    if Postal.config.logging.json_format
+                      logger.debug "[#{client.id}]    Connection opened from #{new_io.remote_address.ip_address}"
+                    else
+                      logger.debug "[#{client.id}] \e[35m   Connection opened from #{new_io.remote_address.ip_address}\e[0m"
+                    end
                   end
                 else
                   # We're not using the proxy protocol so we already know the client's IP
                   client = Client.new(new_io.remote_address.ip_address)
                   if Postal.config.smtp_server.log_connect
-                    logger.debug "[#{client.id}] \e[35m   Connection opened from #{new_io.remote_address.ip_address}\e[0m"
+                    if Postal.config.logging.json_format
+                      logger.debug "[#{client.id}]    Connection opened from #{new_io.remote_address.ip_address}"
+                    else
+                      logger.debug "[#{client.id}] \e[35m   Connection opened from #{new_io.remote_address.ip_address}\e[0m"
+                    end
                   end
                   # We know who the client is, welcome them.
                   client.log "\e[35m   Client identified as #{new_io.remote_address.ip_address}\e[0m"
