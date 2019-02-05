@@ -4,7 +4,7 @@ module Postal
   module LetsEncrypt
 
     def self.client
-      @client ||= Acme::Client.new(:private_key => private_key, :endpoint => endpoint)
+      @client ||= Acme::Client.new(:private_key => private_key, :directory => endpoint)
     end
 
     def self.private_key
@@ -12,7 +12,7 @@ module Postal
     end
 
     def self.endpoint
-      @endpoint ||= Rails.env.development? ? "https://acme-staging.api.letsencrypt.org" : "https://acme-v01.api.letsencrypt.org/"
+      @endpoint ||= Rails.env.development? ? "https://acme-staging-v02.api.letsencrypt.org/directory" : "https://acme-v02.api.letsencrypt.org/directory"
     end
 
     def self.register_private_key(email_address)

@@ -36,7 +36,7 @@ class TrackCertificate < ApplicationRecord
   end
 
   def verify
-    authorization = Postal::LetsEncrypt.client.authorize(:domain => self.domain)
+    authorization = Postal::LetsEncrypt.client.authorization(:url => "http://" + self.domain)
     challenge = authorization.http01
     self.verification_path = challenge.filename
     self.verification_string = challenge.file_content
