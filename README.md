@@ -10,3 +10,19 @@ The application has been running in production for us for nearly 6 months and we
 * [Quick install guide](https://github.com/atech/postal/wiki/Quick-Install)
 * [Installation docs](https://github.com/atech/postal/wiki/Installation)
 * [FAQs](https://github.com/atech/postal/wiki/FAQs), [Features](https://github.com/atech/postal/wiki/Features) & [Screenshots](https://github.com/atech/postal/wiki/Screenshots)
+
+# OneTwoTrip editions
+
+Included pull requests:
+
+* [Added ability to use clustered rabbitmq](https://github.com/atech/postal/pull/725)
+* [add migration to increase links url size](https://github.com/atech/postal/pull/683)
+* [Message database default character set utf8mb4](https://github.com/atech/postal/pull/391)
+* [fixes for link conversion](https://github.com/atech/postal/pull/296)
+* [Added new error to raw sending API - MissingFromAddress as distinct from UnauthenticatedFromAddress](https://github.com/atech/postal/pull/542)
+
+And custom changes:
+
+* Added special symbols to link conversion: | and ,
+* Added mini_racer gem
+* Moved to LetsEncrypt v2

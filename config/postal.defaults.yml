@@ -21,6 +21,8 @@ web_server:
   control_address: 127.0.0.1
   control_port: 9293
   control_token: foo
+  workers: 3
+  preload_app: true
 
 fast_server:
   enabled: false

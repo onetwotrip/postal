@@ -560,7 +560,7 @@ module Postal
         self.token = Nifty::Utils::RandomString.generate(:length => 12) if self.token.blank?
         last_id = @database.insert('messages', @attributes.reject {|k,v| k == :id })
         @attributes['id'] = last_id
-        @database.statistics.increment_all(self.timestamp, self.scope)
+        #@database.statistics.increment_all(self.timestamp, self.scope)
         Statistic.global.increment!(:total_messages)
         Statistic.global.increment!("total_#{self.scope}".to_sym)
         add_to_message_queue

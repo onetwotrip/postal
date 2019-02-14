@@ -15,7 +15,7 @@ gem 'dynamic_form'
 gem 'changey'
 gem 'mail'
 gem 'autoprefixer-rails'
-gem 'bunny', '~> 2.5.1'
+gem 'bunny', '~> 2.14.0'
 gem 'secure_headers'
 gem 'chronic'
 gem 'basic_ssl'
@@ -49,4 +49,8 @@ group :development do
   gem 'rspec-rails'
   gem "factory_girl_rails", "~> 4.0"
   gem "database_cleaner"
+end
+
+group :profile do
+  gem 'ruby-prof'
 end

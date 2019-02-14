@@ -1,7 +1,7 @@
 module Postal
   class MessageParser
 
-    URL_REGEX = /(?<url>(?<protocol>https?)\:\/\/(?<domain>[A-Za-z0-9\-\.\:]+)(?<path>\/[A-Za-z0-9\.\/\+\?\&\-\_\%\=\~\:\;\,\(\)\[\]#]*)?+)/
+    URL_REGEX = /(?<url>(?<protocol>https?)\:\/\/(?<domain>[A-Za-z0-9\-\.\:]+)(?<path>\/[A-Za-z0-9\.\/\+\?\&\-\_\%\=\~\:\;\,\(\)\[\]\|#]*)?+)/
 
     def initialize(message)
       @message = message

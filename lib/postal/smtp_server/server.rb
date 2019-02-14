@@ -114,7 +114,11 @@ module Postal
                     end
                   end
                   # We know who the client is, welcome them.
-                  client.log "\e[35m   Client identified as #{new_io.remote_address.ip_address}\e[0m"
+                  if Postal.config.logging.json_format
+                    client.log "   Client identified as #{new_io.remote_address.ip_address}"
+                  else
+                    client.log "\e[35m   Client identified as #{new_io.remote_address.ip_address}\e[0m"
+                  end
                   new_io.print("220 #{Postal.config.dns.smtp_server_hostname} ESMTP Postal/#{client.id}")
                 end
                 # Register the client and its socket with nio4r
@@ -170,7 +174,11 @@ module Postal
                   unless result.nil?
                     result = [result] unless result.is_a?(Array)
                     result.compact.each do |line|
-                      client.log "\e[34m=> #{line.strip}\e[0m"
+                      if Postal.config.logging.json_format
+                        client.log "=> #{line.strip}"
+                      else
+                        client.log "\e[34m=> #{line.strip}\e[0m"
+                      end
                       begin
                         io.write(line.to_s + "\r\n")
                         io.flush
@@ -207,7 +215,11 @@ module Postal
 
                 # Has the clint requested we close the connection?
                 if client.finished? || eof
-                  client.log "\e[35m   Connection closed\e[0m"
+                  if Postal.config.logging.json_format
+                    client.log "   Connection closed"
+                  else
+                    client.log "\e[35m   Connection closed\e[0m"
+                  end
                   # Deregister the socket and close it
                   @io_selector.deregister(io)
                   buffers.delete(io)

@@ -43,10 +43,18 @@ module Postal
           proxy(data)
         else
           if @proc
-            log "\e[32m<= #{data.strip}\e[0m"
+            if Postal.config.logging.json_format
+              log "<= #{data.strip}"
+            else
+              log "\e[32m<= #{data.strip}\e[0m"
+            end
             @proc.call(data)
           else
-            log "\e[32m<= #{data.strip}\e[0m"
+            if Postal.config.logging.json_format
+              log "<= #{data.strip}"
+            else
+              log "\e[32m<= #{data.strip}\e[0m"
+            end
             handle_command(data)
           end
         end
@@ -99,7 +107,11 @@ module Postal
           @ip_address = m[2]
           check_ip_address
           @state = :welcome
-          log "\e[35m   Client identified as #{@ip_address}\e[0m"
+          if Postal.config.logging.json_format
+            log "   Client identified as #{@ip_address}"
+          else
+            log "\e[35m   Client identified as #{@ip_address}\e[0m"
+          end
           "220 #{Postal.config.dns.smtp_server_hostname} ESMTP Postal/#{id}"
         else
           @finished = true

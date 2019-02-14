@@ -70,6 +70,8 @@ system!("rm -Rf #{WC_PATH}/.bundle")
 system!("rm -Rf #{WC_PATH}/.gitignore")
 system!("rm -Rf #{WC_PATH}/tmp")
 
+File.open("#{WC_PATH}/version", 'w') { |f| f.write(last_commit) }
+
 # Build a new tgz file
 puts "\e[44;37mCreating build package\e[0m"
 system("tar cpzf #{PACKAGE_PATH} -C #{WC_PATH} .")
