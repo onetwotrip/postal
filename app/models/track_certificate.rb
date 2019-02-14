@@ -32,19 +32,20 @@ class TrackCertificate < ApplicationRecord
   end
 
   def get
-    verify && issue
+    issue
   end
 
-  def verify
-    authorization = Postal::LetsEncrypt.client.authorization(:url => "http://" + self.domain)
+  def issue
+    order = Postal::LetsEncrypt.client.new_order(identifiers: [self.domain])
+    authorization = order.authorizations.first
     challenge = authorization.http01
     self.verification_path = challenge.filename
     self.verification_string = challenge.file_content
     self.save!
     logger.info "Attempting verification of #{self.domain}"
-    challenge.request_verification
+    challenge.request_validation
     checks = 0
-    until challenge.verify_status != "pending"
+    until challenge.status != "pending"
       checks += 1
       if checks > 30
         logger.info "Status remained at pending for 30 checks"
@@ -53,40 +54,37 @@ class TrackCertificate < ApplicationRecord
       sleep 1
     end
 
-    unless challenge.verify_status == "valid"
-      logger.info "Status was not valid (was: #{challenge.verify_status})"
+    unless challenge.status == "valid"
+      logger.info "Status was not valid (was: #{challenge.status})"
       return false
     end
 
+    private_key = OpenSSL::PKey::RSA.new(self.key)
+    csr = Acme::Client::CertificateRequest.new(private_key: private_key, subject: {common_name: self.domain})
+    logger.info "Getting certificate for #{self.domain}"
+    order.finalize(csr: csr)
+    sleep(1) while order.status == 'processing'
+    https_cert = order.certificate
+    logger.info https_cert
+    self.certificate = https_cert
+    self.expires_at = https_cert.X509.not_after
+    self.renew_after = (self.expires_at - 1.month) + rand(10).days
+    self.save!
+    logger.info "Certificate issued (expires on #{self.expires_at}, will renew after #{self.renew_after})"
     return true
+
   rescue Acme::Client::Error => e
     @retries = 0
     if e.is_a?(Acme::Client::Error::BadNonce) && @retries < 5
       @retries += 1
       logger.info "Bad nounce encountered. Retrying (#{@retries} of 5 attempts)"
+      logger.info "Error: #{e.class} (#{e.message})"
       sleep 1
-      verify
+      issue
     else
       logger.info "Error: #{e.class} (#{e.message})"
       return false
     end
-  end
-
-  def issue
-    csr = OpenSSL::X509::Request.new
-    csr.subject = OpenSSL::X509::Name.new([['CN', self.domain, OpenSSL::ASN1::UTF8STRING]])
-    private_key = OpenSSL::PKey::RSA.new(self.key)
-    csr.public_key = private_key.public_key
-    csr.sign(private_key, OpenSSL::Digest::SHA256.new)
-    logger.info "Getting certificate for #{self.domain}"
-    https_cert = Postal::LetsEncrypt.client.new_certificate(csr)
-    self.certificate = https_cert.to_pem
-    self.intermediaries = https_cert.chain_to_pem
-    self.expires_at = https_cert.x509.not_after
-    self.renew_after = (self.expires_at - 1.month) + rand(10).days
-    self.save!
-    logger.info "Certificate issued (expires on #{self.expires_at}, will renew after #{self.renew_after})"
-    return true
   end
 
   def certificate_object

@@ -35,9 +35,6 @@ fast_server:
   proxy_protocol: false
   default_private_key_path: # Defaults to config/fast_server.key
   default_tls_certificate_path: # Defaults to config/fast_server.cert
-  control_address: 127.0.0.1
-  control_port: 9294
-  control_token: foo
 
 main_db:
   host: 127.0.0.1
