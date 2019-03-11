@@ -68,7 +68,7 @@ class TrackCertificate < ApplicationRecord
     logger.info https_cert
     self.certificate = https_cert
     https_cert_x509 = OpenSSL::X509::Certificate.new https_cert
-    self.expires_at = https_cert_x509.X509.not_after
+    self.expires_at = https_cert_x509.not_after
     self.renew_after = (self.expires_at - 1.month) + rand(10).days
     self.save!
     logger.info "Certificate issued (expires on #{self.expires_at}, will renew after #{self.renew_after})"
