@@ -19,7 +19,7 @@ module Postal
         algorithm_version = 'a'
         separator = '~'
 
-        if request.path.start_with?(algorithm_version)
+        if request.path.start_with?("/#{algorithm_version}/")
           Postal.logger_for(:fast_server).info("vbar | incoming path: #{request.path}")
           begin
             encoded = request.path.split(separator)
@@ -48,7 +48,7 @@ module Postal
           end
         end
 
-        if request.path.start_with?('/.well-known')
+        if request.path =~ /\A\/(\.well-known\/.*)/
           if certificate = ::TrackCertificate.find_by_verification_path($1)
             return [200, {'Content-Length' => certificate.verification_string.bytesize.to_s}, [certificate.verification_string]]
           else
