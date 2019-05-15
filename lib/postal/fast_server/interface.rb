@@ -16,8 +16,39 @@ module Postal
 
       def call(env)
         request = Rack::Request.new(env)
+        algorithm_version = 'a'
+        separator = '~'
 
-        if request.path =~ /\A\/(\.well-known\/.*)/
+        if request.path.start_with?(algorithm_version)
+          Postal.logger_for(:fast_server).info("vbar | incoming path: #{request.path}")
+          begin
+            encoded = request.path.split(separator)
+            link = {}
+            link['message_id'] = Base64.urlsafe_decode64(encoded[0])
+            link['timestamp']  = Base64.urlsafe_decode64(encoded[1])
+            link['url']        = Base64.urlsafe_decode64(encoded[2])
+
+            Postal.logger_for(:fast_server).info("vbar | decoded - id: #{link['message_id']}, time:#{link['timestamp']}, url:#{link['url']}")
+
+            SendWebhookJob.queue(
+              :main,
+              event: 'MessageLinkClicked',
+              payload: {
+                _message:   link['message_id'],
+                url:        link['url'],
+                ip_address: request.ip,
+                user_agent: request.user_agent
+              }
+            )
+
+            return [307, {'Location' => link['url']}, ["Redirected to: #{link['url']}"]]
+          rescue StandardError => e
+            Postal.logger_for(:fast_server).error("vbar | error in path decode: #{e.message}")
+            return [500, {}, ['Sorry, try later']]
+          end
+        end
+
+        if request.path.start_with?('/.well-known')
           if certificate = ::TrackCertificate.find_by_verification_path($1)
             return [200, {'Content-Length' => certificate.verification_string.bytesize.to_s}, [certificate.verification_string]]
           else

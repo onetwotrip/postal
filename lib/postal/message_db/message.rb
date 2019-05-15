@@ -464,10 +464,17 @@ module Postal
       # Create a new link
       #
       def create_link(url)
-        hash = Digest::SHA1.hexdigest(url.to_s)
-        token = Nifty::Utils::RandomString.generate(:length => 8)
-        database.insert(:links, {:message_id => self.id, :hash => hash, :url => url, :timestamp => Time.now.to_f, :token => token})
-        token
+        require 'base64'
+        hash = []
+        hash << Base64.urlsafe_encode64(self.id, padding: false)
+        hash << Base64.urlsafe_encode64(Time.now.to_f, padding: false)
+        hash << Base64.urlsafe_encode64(url, padding: false)
+        # anton.ryabov: using 'a' in path for stealth versioning,
+        # when algorithm will changed increment to 'b' and so on.
+        # Also, it determins our new implementation
+        algorithm_version = 'a'
+        separator = '~'
+        "#{algorithm_version}/#{hash.join(separator)}"
       end
 
       #

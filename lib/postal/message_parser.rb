@@ -8,11 +8,9 @@ module Postal
       @actioned = false
       @tracked_links = 0
       @tracked_images = 0
-      @domain = @message.server.track_domains.where(:domain => @message.domain, :dns_status => "OK").first
+      @domain = @message.server.track_domains.where(domain: @message.domain, dns_status: 'OK').first
 
-      if @domain
-        @parsed_output = generate
-      end
+      @parsed_output = generate if @domain
     end
 
     attr_reader :tracked_links
@@ -101,8 +99,8 @@ module Postal
               theend = url.size - 2
               url = url[0..theend]
             end
-            token = @message.create_link(url)
-            "#{domain}/#{@message.server.token}/#{token}"
+            path = @message.create_link(url)
+            "#{domain}/#{path}"
           else
             $&
           end
@@ -113,8 +111,8 @@ module Postal
         part.gsub!(/href=([\'\"])(#{URL_REGEX})[\'\"]/) do
           if track_domain?($~[:domain])
             @tracked_links += 1
-            token = @message.create_link($~[:url])
-            "href='#{domain}/#{@message.server.token}/#{token}'"
+            path = @message.create_link($~[:url])
+            "href='#{domain}/#{path}'"
           else
             $&
           end
