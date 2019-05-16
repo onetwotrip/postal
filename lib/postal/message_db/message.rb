@@ -469,15 +469,15 @@ module Postal
 
         hash = {}
         hash['version']    = Base64.urlsafe_encode64(Postal.config.track_links.version, padding: false)
-        hash['message_id'] = Base64.urlsafe_encode64(self.id, padding: false)
+        hash['message_id'] = Base64.urlsafe_encode64(self.id.to_s, padding: false)
         hash['url']        = Base64.urlsafe_encode64(url, padding: false)
         separator          = Postal.config.track_links.separator
         plain_string       = hash.values.join(separator)
 
         # TODO: (anton.ryabov) mb do `Base64.urlsafe_decode64(Postal.config...)` in `lib/postal/confg`?
         cipher     = OpenSSL::Cipher.new('aes256').encrypt
-        cipher.iv  = Base64.urlsafe_decode64(Postal.config.track_links.iv)
-        cipher.key = Base64.urlsafe_decode64(Postal.config.track_links.key)
+        cipher.iv  = Base64.urlsafe_decode64(Postal.config.track_links.cipher_iv)
+        cipher.key = Base64.urlsafe_decode64(Postal.config.track_links.cipher_key)
 
         encoded_string = cipher.update(plain_string) + cipher.final
         encoded = Base64.urlsafe_encode64(encoded_string, padding: false)
