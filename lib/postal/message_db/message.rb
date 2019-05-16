@@ -464,10 +464,24 @@ module Postal
       # Create a new link
       #
       def create_link(url)
-        hash = Digest::SHA1.hexdigest(url.to_s)
-        token = Nifty::Utils::RandomString.generate(:length => 8)
-        database.insert(:links, {:message_id => self.id, :hash => hash, :url => url, :timestamp => Time.now.to_f, :token => token})
-        token
+        require 'openssl'
+        require 'base64'
+
+        hash = {}
+        hash['version']    = Base64.urlsafe_encode64(Postal.config.track_links.version, padding: false)
+        hash['message_id'] = Base64.urlsafe_encode64(self.id, padding: false)
+        hash['url']        = Base64.urlsafe_encode64(url, padding: false)
+        separator          = Postal.config.track_links.separator
+        plain_string       = hash.values.join(separator)
+
+        # TODO: (anton.ryabov) mb do `Base64.urlsafe_decode64(Postal.config...)` in `lib/postal/confg`?
+        cipher     = OpenSSL::Cipher.new('aes256').encrypt
+        cipher.iv  = Base64.urlsafe_decode64(Postal.config.track_links.iv)
+        cipher.key = Base64.urlsafe_decode64(Postal.config.track_links.key)
+
+        encoded_string = cipher.update(plain_string) + cipher.final
+        encoded = Base64.urlsafe_encode64(encoded_string, padding: false)
+        "l/#{encoded}"
       end
 
       #
@@ -570,7 +584,6 @@ module Postal
         # This version of mail is only used for accessing the bodies.
         @mail ||= raw_message? ? Mail.new(raw_message) : nil
       end
-
     end
   end
 end
