@@ -63,3 +63,7 @@ rails:
   # This is generated automatically by the config initialization. It should be a random
   # string unique to your installation.
   secret_key: {{secretkey}}
+
+track_links:
+  key: TTh5e6jmESKaVpOYW4XFKgQHki2IWKKKnwe3_CLI-Mo
+  iv: MMa6dPB7fosvu9ByYTikPA

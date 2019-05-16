@@ -130,3 +130,7 @@ clamav:
 smtp_client:
   open_timeout: 30
   read_timeout: 60
+
+track_links:
+  version: v1
+  separator: ~
