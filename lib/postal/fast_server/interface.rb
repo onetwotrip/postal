@@ -15,7 +15,7 @@ module Postal
       end
 
       def get_server_id
-        ::Server.all.first.message_db.serve_id
+        ::Server.all.first.message_db.server_id
       end
 
       def call(env)
