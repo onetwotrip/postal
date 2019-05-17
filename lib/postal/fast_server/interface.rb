@@ -14,6 +14,10 @@ module Postal
         end
       end
 
+      def get_server_id
+        ::Server.all.first.message_db.serve_id
+      end
+
       def call(env)
         request = Rack::Request.new(env)
 
@@ -46,6 +50,7 @@ module Postal
 
             SendWebhookJob.queue(
               :main,
+              server_id: get_server_id,
               event: 'MessageLinkClicked',
               payload: {
                 _message:   link['message_id'],
