@@ -25,8 +25,8 @@ module Postal
 
             require 'openssl'
             decipher     = OpenSSL::Cipher.new('aes256').decrypt
-            decipher.key = Base64.urlsafe_decode64(Postal.config.track_links.key)
-            decipher.iv  = Base64.urlsafe_decode64(Postal.config.track_links.iv)
+            decipher.key = Base64.urlsafe_decode64(Postal.config.track_links.cipher_key)
+            decipher.iv  = Base64.urlsafe_decode64(Postal.config.track_links.cipher_iv)
 
             begin
               decoded = decipher.update(decoded64) + decipher.final
