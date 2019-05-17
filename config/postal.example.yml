@@ -65,5 +65,5 @@ rails:
   secret_key: {{secretkey}}
 
 track_links:
-  key: TTh5e6jmESKaVpOYW4XFKgQHki2IWKKKnwe3_CLI-Mo
-  iv: MMa6dPB7fosvu9ByYTikPA
+  cipher_key: TTh5e6jmESKaVpOYW4XFKgQHki2IWKKKnwe3_CLI-Mo
+  cipher_iv: MMa6dPB7fosvu9ByYTikPA
