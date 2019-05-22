@@ -69,7 +69,7 @@ module Postal
       #
       def clean
         ['clicks', 'deliveries', 'links', 'live_stats', 'loads', 'messages',
-          'raw_message_sizes', 'spam_checks', 'stats_daily', 'stats_hourly',
+          'spam_checks', 'stats_daily', 'stats_hourly',
           'stats_monthly', 'stats_yearly', 'suppressions', 'webhook_requests'].each do |table|
           @database.query("TRUNCATE `#{@database.database_name}`.`#{table}`")
         end
@@ -86,7 +86,6 @@ module Postal
               :next =>  'int(11) DEFAULT NULL'
             }
           ))
-          @database.query("INSERT INTO `#{@database.database_name}`.`raw_message_sizes` (table_name, size) VALUES ('#{table}', 0)")
         rescue Mysql2::Error => e
           # Don't worry if the table already exists, another thread has already run this code.
           raise unless e.message =~ /already exists/
@@ -123,7 +122,6 @@ module Postal
       #
       def remove_raw_table(table)
         @database.query("UPDATE `#{@database.database_name}`.`messages` SET raw_table = NULL, raw_headers_id = NULL, raw_body_id = NULL, size = NULL WHERE raw_table = '#{table}'")
-        @database.query("DELETE FROM `#{@database.database_name}`.`raw_message_sizes` WHERE table_name = '#{table}'")
         drop_table(table)
       end
 

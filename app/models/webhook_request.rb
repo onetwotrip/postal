@@ -32,13 +32,20 @@ class WebhookRequest < ApplicationRecord
   after_commit :queue, :on => :create
 
   def self.trigger(server, event, payload = {})
+    logger = Postal.logger_for(:delivery)
+    logger.info "WebhookRequest.trigger server: #{server}, event: #{event}"
+
     unless server.is_a?(Server)
       server = Server.find(server.to_i)
     end
 
+    logger.info "WebhookRequest.trigger after Server.find"
+
     webhooks = server.webhooks.enabled.includes(:webhook_events).references(:webhook_events).where("webhooks.all_events = ? OR webhook_events.event = ?", true, event)
+    logger.info "WebhookRequest.trigger get webhooks"
     webhooks.each do |webhook|
       server.webhook_requests.create!(:event => event, :payload => payload, :webhook => webhook, :url => webhook.url)
+      logger.info "WebhookRequest.trigger after create"
     end
   end
 
@@ -47,13 +54,16 @@ class WebhookRequest < ApplicationRecord
   end
 
   def queue
-    WebhookDeliveryJob.queue(:main, :id => self.id)
+    logger = Postal.logger_for(:delivery)
+    logger.info "WebhookRequest.queue requested"
+    WebhookDeliveryJob.queue(:webhooks, :id => self.id)
+    logger.info "WebhookDeliveryJob queued with id: #{self.id}"
   end
 
   def deliver
     logger = Postal.logger_for(:webhooks)
     payload = {:event => self.event, :timestamp => self.created_at.to_f, :payload => self.payload, :uuid => self.uuid}.to_json
-    logger.info "[#{id}] Sending webhook request to `#{self.url}`"
+    logger.info "[#{id}] Sending webhook request #{self.event} to `#{self.url}`"
     result = Postal::HTTP.post(self.url, :sign => true, :json => payload, :timeout => 5)
     self.attempts += 1
     self.retry_after = RETRIES[self.attempts]&.from_now

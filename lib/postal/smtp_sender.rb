@@ -222,7 +222,7 @@ module Postal
 
     def lookup_ip_address(type, hostname)
       records = []
-      Resolv::DNS.open do |dns|
+      Resolv::DNS.open(:nameserver => ['127.0.0.1']) do |dns|
         dns.timeouts = [10,5]
         case type
         when :a

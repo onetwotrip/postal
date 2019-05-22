@@ -49,7 +49,7 @@ module Postal
             Postal.logger_for(:fast_server).info("links | decoded - version:#{link['version']}, message_id:#{link['message_id']}, url:#{link['url']}")
 
             SendWebhookJob.queue(
-              :main,
+              :webhooks,
               server_id: get_server_id,
               event: 'MessageLinkClicked',
               payload: {
@@ -129,7 +129,7 @@ module Postal
               if link['message_id']
                 message_db.update(:messages, {:clicked => time}, :where => {:id => link['message_id']})
                 message_db.insert(:clicks, {:message_id => link['message_id'], :link_id => link['id'], :ip_address => request.ip, :user_agent => request.user_agent, :timestamp => time})
-                SendWebhookJob.queue(:main, :server_id => message_db.server_id, :event => 'MessageLinkClicked', :payload => {:_message => link['message_id'], :url => link['url'], :token => link['token'], :ip_address => request.ip, :user_agent => request.user_agent})
+                SendWebhookJob.queue(:webhooks, :server_id => message_db.server_id, :event => 'MessageLinkClicked', :payload => {:_message => link['message_id'], :url => link['url'], :token => link['token'], :ip_address => request.ip, :user_agent => request.user_agent})
               end
               return [307, {'Location' => link['url']}, ["Redirected to: #{link['url']}"]]
             else

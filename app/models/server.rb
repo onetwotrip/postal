@@ -217,8 +217,7 @@ class Server < ApplicationRecord
       :held => self.held_messages,
       :bounce_rate => self.bounce_rate,
       :message_rate => self.message_rate,
-      :throughput => self.throughput_stats,
-      :size => self.message_db.total_size
+      :throughput => self.throughput_stats
     }
   end
 

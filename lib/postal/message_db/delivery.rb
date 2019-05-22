@@ -3,11 +3,14 @@ module Postal
     class Delivery
 
       def self.create(message, attributes = {})
+        logger = Postal.logger_for(:delivery)
+        logger.info "I'm in delivery"
         attributes = message.database.stringify_keys(attributes)
         attributes = attributes.merge('message_id' => message.id, 'timestamp' => Time.now.to_f)
         id = message.database.insert('deliveries', attributes)
         delivery = Delivery.new(message, attributes.merge('id' => id))
-        delivery.update_statistics
+        logger.info "Got all attributes for message #{message.id} and inserted in database"
+        delivery.update_statistics if Postal.config.statistics.enabled
         delivery.send_webhooks
         delivery
       end
@@ -40,7 +43,10 @@ module Postal
       end
 
       def send_webhooks
+        logger = Postal.logger_for(:delivery)
+        logger.info "Webhook requested self_status: #{self.status}"
         if self.webhook_event
+          logger.info "Webhook event valid webhook_event: #{self.webhook_event}"
           WebhookRequest.trigger(@message.database.server_id, self.webhook_event, self.webhook_hash)
         end
       end

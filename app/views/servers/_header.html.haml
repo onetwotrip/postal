@@ -25,8 +25,6 @@
         = link_to pluralize(@server.queue_size, 'queued message'), queue_organization_server_path(organization, @server), :class => "js-queue-size"
       %li.serverHeader__stat-bounces
         = link_to "#{number_to_percentage @server.bounce_rate, :precision => 1} bounce rate", outgoing_organization_server_messages_path(organization, @server, :query => "status: hardfail status:bounced"), :class => 'js-bounce-rate'
-      %li.serverHeader__stat-size
-        = link_to "#{number_to_human_size @server.message_db.total_size} used", [:retention, organization, @server], :class => 'js-disk-size'
 
   .serverHeader__usage{"data-turbolinks-permanent" => true, :id => "serverUsage-#{@server.uuid}"}
     %p.serverHeader__usageTitle Message throughput &mdash; last 60 minutes

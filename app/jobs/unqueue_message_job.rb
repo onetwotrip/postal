@@ -114,7 +114,7 @@ class UnqueueMessageJob < Postal::Job
               #
               # Update live stats
               #
-              queued_message.message.database.live_stats.increment(queued_message.message.scope)
+              queued_message.message.database.live_stats.increment(queued_message.message.scope) if Postal.config.statistics.enabled
 
               #
               # Inspect incoming messages
@@ -360,7 +360,7 @@ class UnqueueMessageJob < Postal::Job
               end
 
               # Update the live stats for this message.
-              queued_message.message.database.live_stats.increment(queued_message.message.scope)
+              queued_message.message.database.live_stats.increment(queued_message.message.scope) if Postal.config.statistics.enabled
 
               # If the server is in development mode, hold it
               if queued_message.server.mode == 'Development' && !queued_message.manual?

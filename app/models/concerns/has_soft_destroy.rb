@@ -13,6 +13,7 @@ module HasSoftDestroy
       self.deleted_at = Time.now
       self.save!
       ActionDeletionJob.queue(:main, :type => self.class.name, :id => self.id)
+      ActionDeletionJob.queue(:webhooks, :type => self.class.name, :id => self.id)
     end
   end
 

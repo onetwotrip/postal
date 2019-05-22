@@ -6,7 +6,7 @@ module Clockwork
   end
 
   every 1.minute, 'every-1-minutes' do
-    RequeueWebhooksJob.queue(:main)
+    RequeueWebhooksJob.queue(:webhooks)
     SendNotificationsJob.queue(:main)
   end
 
@@ -21,7 +21,7 @@ module Clockwork
   end
 
   every 1.hour, 'every-hour', :at => ['**:45'] do
-    PruneWebhookRequestsJob.queue(:main)
+    PruneWebhookRequestsJob.queue(:webhooks)
   end
 
   every 1.day, 'every-day', :at => ['03:00'] do

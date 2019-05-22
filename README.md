@@ -23,6 +23,8 @@ Included pull requests:
 
 And custom changes:
 
-* Added special symbols to link conversion: | and ,
+* Added special symbols to link conversion: | @ and ,
 * Added mini_racer gem
 * Moved to LetsEncrypt v2
+* Split :main queue to :main and :webhooks
+* Changed process of link generation

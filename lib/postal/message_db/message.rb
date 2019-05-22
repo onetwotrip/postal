@@ -6,7 +6,7 @@ module Postal
       end
 
       def self.find_one(database, query)
-        query = {:id => query.to_i} if query.is_a?(Fixnum)
+        query = {:id => query.to_i} if query.is_a?(Integer)
         if message = database.select('messages', :where => query, :limit => 1).first
           Message.new(database, message)
         else
@@ -101,7 +101,7 @@ module Postal
       end
 
       #
-      # Return the time that the last delivery was attempted
+      # Return the time that the last delivery was attempted
       #
       def last_delivery_attempt
         @last_delivery_attempt ||= @attributes['last_delivery_attempt'] ? Time.zone.at(@attributes['last_delivery_attempt']) : nil
@@ -125,7 +125,10 @@ module Postal
       # Add a delivery attempt for this message
       #
       def create_delivery(status, options = {})
+        logger = Postal.logger_for(:webhooks)
+        logger.info "message.rb create_delivery status=#{status} details='#{details}'"
         delivery = Delivery.create(self, options.merge(:status => status))
+
         hold_expiry = status == 'Held' ? 7.days.from_now.to_f : nil
         self.update(:status => status, :last_delivery_attempt => delivery.timestamp.to_f, :held => status == 'Held' ? 1 : 0, :hold_expiry => hold_expiry)
         delivery
@@ -281,7 +284,6 @@ module Postal
           @mail = nil
           @pending_raw_message = nil
           copy_attributes_from_raw_message
-          @database.query("UPDATE `#{@database.database_name}`.`raw_message_sizes` SET size = size + #{self.size} WHERE table_name = '#{table_name}'")
         end
       end
 
@@ -441,7 +443,7 @@ module Postal
       #
       def bounce!(bounce_message)
         create_delivery('Bounced', :details => "We've received a bounce message for this e-mail. See <msg:#{bounce_message.id}> for details.")
-        SendWebhookJob.queue(:main, :server_id => self.database.server_id, :event => "MessageBounced", :payload => {:_original_message => self.id, :_bounce => bounce_message.id})
+        SendWebhookJob.queue(:webhooks, :server_id => self.database.server_id, :event => "MessageBounced", :payload => {:_original_message => self.id, :_bounce => bounce_message.id})
       end
 
       #
@@ -457,7 +459,7 @@ module Postal
       def create_load(request)
         update('loaded' => Time.now.to_f) if loaded.nil?
         database.insert(:loads, {:message_id => self.id, :ip_address => request.ip, :user_agent => request.user_agent, :timestamp => Time.now.to_f})
-        SendWebhookJob.queue(:main, :server_id => self.database.server_id, :event => 'MessageLoaded', :payload => {:_message => self.id, :ip_address => request.ip, :user_agent => request.user_agent})
+        SendWebhookJob.queue(:webhooks, :server_id => self.database.server_id, :event => 'MessageLoaded', :payload => {:_message => self.id, :ip_address => request.ip, :user_agent => request.user_agent})
       end
 
       #
