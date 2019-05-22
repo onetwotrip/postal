@@ -133,4 +133,4 @@ smtp_client:
 
 track_links:
   version: v1
-  separator: ~
+  separator: "~"
