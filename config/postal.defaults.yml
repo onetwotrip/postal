@@ -49,6 +49,7 @@ main_db:
 logging:
   stdout: false
   json_format: false
+  disable_explain: false # Disable mysql explain logging for requests greater than 0.5
   root: # Automatically determined based on config root
   max_log_file_size: 20
   max_log_files: 10

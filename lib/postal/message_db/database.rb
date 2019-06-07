@@ -323,12 +323,14 @@ module Postal
         else
           logger.debug "  \e[4;34mMessageDB Query (#{time.round(2)}s) \e[0m  \e[33m#{query}\e[0m"
         end
-        if time > 0.5 && query =~ /\A(SELECT|UPDATE|DELETE) /
-          id = Nifty::Utils::RandomString.generate(:length => 6).upcase
-          explain_result = ResultForExplainPrinter.new(connection.query("EXPLAIN #{query}"))
-          slow_query_logger.info "[#{id}] EXPLAIN #{query}"
-          for line in ActiveRecord::ConnectionAdapters::MySQL::ExplainPrettyPrinter.new.pp(explain_result, time).split("\n")
-            slow_query_logger.info "[#{id}] " + line
+        if Postal.config.logging.disable_explain
+          if time > 0.5 && query =~ /\A(SELECT|UPDATE|DELETE) /
+            id = Nifty::Utils::RandomString.generate(:length => 6).upcase
+            explain_result = ResultForExplainPrinter.new(connection.query("EXPLAIN #{query}"))
+            slow_query_logger.info "[#{id}] EXPLAIN #{query}"
+            for line in ActiveRecord::ConnectionAdapters::MySQL::ExplainPrettyPrinter.new.pp(explain_result, time).split("\n")
+              slow_query_logger.info "[#{id}] " + line
+            end
           end
         end
         result

@@ -151,7 +151,7 @@ module Postal
           # We know this IP isn't valid. We don't need to do anything
         else
           # We need to look this up
-          if !self.class.local_ip?(ip) && ip_address = IPAddress.where("ipv4 = ? OR ipv6 = ?", ip, ip).first
+          if !self.class.local_ip?(ip) && ip_address = ''
             @pairs[ip_address.ipv4] = ip_address.ipv6
             @ip_to_id_mapping[ip] = ip_address.id
             need = ip_address.id
