@@ -23,8 +23,13 @@ Included pull requests:
 
 And custom changes:
 
-* Added special symbols to link conversion: | @ and ,
+* Added special symbols to link conversion: | @ ! and ,
 * Added mini_racer gem
 * Moved to LetsEncrypt v2
 * Split :main queue to :main and :webhooks
 * Changed process of link generation
+* Disabled IP address checking
+* Add force_index on_address for suppressions
+* Disabled statistics
+* Local named is required (option to set custom DNS server is not provided)
+* Deleted counter for database size
