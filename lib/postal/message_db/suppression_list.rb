@@ -18,7 +18,7 @@ module Postal
       end
 
       def get(type, address)
-        @database.select('suppressions FORCE INDEX(on_address)', :where => {:type => type, :address => address, :keep_until => {:greater_than_or_equal_to => Time.now.to_f}}, :limit => 1).first
+        @database.select('suppressions', :force_index => 'on_address', :where => {:type => type, :address => address, :keep_until => {:greater_than_or_equal_to => Time.now.to_f}}, :limit => 1).first
       end
 
       def all_with_pagination(page)

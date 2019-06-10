@@ -147,6 +147,9 @@ module Postal
           sql_query << " *"
         end
         sql_query << " FROM `#{database_name}`.`#{table}`"
+        if options[:force_index]
+          sql_query << " FORCE INDEX(#{options[:force_index]})"
+        end
         if options[:where] && !options[:where].empty?
           sql_query << " " + build_where_string(options[:where], ' AND ')
         end
