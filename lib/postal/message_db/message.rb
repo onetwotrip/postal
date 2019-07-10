@@ -125,8 +125,6 @@ module Postal
       # Add a delivery attempt for this message
       #
       def create_delivery(status, options = {})
-        logger = Postal.logger_for(:webhooks)
-        logger.info "message.rb create_delivery status=#{status} details='#{details}'"
         delivery = Delivery.create(self, options.merge(:status => status))
 
         hold_expiry = status == 'Held' ? 7.days.from_now.to_f : nil
