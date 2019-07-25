@@ -218,7 +218,7 @@ module Postal
     def self.job_queue(name)
       @job_queues ||= {}
       @job_queues[name] ||= begin
-        job_channel.queue("deliver-jobs-#{name}", :durable => true, :arguments => {'x-message-ttl' => 86400000})
+        job_channel.queue("deliver-jobs-#{name}", :durable => true, :arguments => {'x-message-ttl' => 600000})
       end
     end
 

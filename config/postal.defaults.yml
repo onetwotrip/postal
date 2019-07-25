@@ -135,6 +135,7 @@ smtp_client:
 track_links:
   version: v1
   separator: "~"
+  disable_exclude_domains: false
 
 statistics:
   enabled: true

@@ -142,7 +142,11 @@ module Postal
     end
 
     def track_domain?(domain)
-      !@domain.excluded_click_domains_array.include?(domain)
+      if Postal.config.track_links.disable_exclude_domains
+        true
+      else
+        !@domain.excluded_click_domains_array.include?(domain)
+      end
     end
 
   end
