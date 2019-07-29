@@ -318,21 +318,23 @@ module Postal
       private
 
       def query_on_connection(connection, query)
-        start_time = Time.now.to_f
+        start_time = Time.now.to_f unless Postal.config.logging.disable_query_logging
         result = connection.query(query)
-        time = Time.now.to_f - start_time
-        if Postal.config.logging.json_format
-          logger.debug "  MessageDB Query (#{time.round(2)}s)   #{query}"
-        else
-          logger.debug "  \e[4;34mMessageDB Query (#{time.round(2)}s) \e[0m  \e[33m#{query}\e[0m"
-        end
-        unless Postal.config.logging.disable_explain
-          if time > 0.5 && query =~ /\A(SELECT|UPDATE|DELETE) /
-            id = Nifty::Utils::RandomString.generate(:length => 6).upcase
-            explain_result = ResultForExplainPrinter.new(connection.query("EXPLAIN #{query}"))
-            slow_query_logger.info "[#{id}] EXPLAIN #{query}"
-            for line in ActiveRecord::ConnectionAdapters::MySQL::ExplainPrettyPrinter.new.pp(explain_result, time).split("\n")
-              slow_query_logger.info "[#{id}] " + line
+        unless Postal.config.logging.disable_query_logging
+          time = Time.now.to_f - start_time
+          if Postal.config.logging.json_format
+            logger.debug "  MessageDB Query (#{time.round(2)}s)   #{query}"
+          else
+            logger.debug "  \e[4;34mMessageDB Query (#{time.round(2)}s) \e[0m  \e[33m#{query}\e[0m"
+          end
+          unless Postal.config.logging.disable_explain
+            if time > 0.5 && query =~ /\A(SELECT|UPDATE|DELETE) /
+              id = Nifty::Utils::RandomString.generate(:length => 6).upcase
+              explain_result = ResultForExplainPrinter.new(connection.query("EXPLAIN #{query}"))
+              slow_query_logger.info "[#{id}] Time: #{time} EXPLAIN #{query}"
+              for line in ActiveRecord::ConnectionAdapters::MySQL::ExplainPrettyPrinter.new.pp(explain_result, time).split("\n")
+                slow_query_logger.info "[#{id}] " + line
+              end
             end
           end
         end
