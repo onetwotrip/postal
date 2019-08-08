@@ -140,3 +140,6 @@ track_links:
 
 statistics:
   enabled: true
+
+functional:
+  limits: false

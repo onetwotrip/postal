@@ -345,18 +345,20 @@ class UnqueueMessageJob < Postal::Job
               end
 
               # Check send limits
-              if queued_message.server.send_limit_exceeded?
-                # If we're over the limit, we're going to be holding this message
-                queued_message.server.update_columns(:send_limit_exceeded_at => Time.now, :send_limit_approaching_at => nil)
-                queued_message.message.create_delivery('Held', :details => "Message held because send limit (#{queued_message.server.send_limit}) has been reached.")
-                queued_message.destroy
-                log "#{log_prefix} Server send limit has been exceeded. Holding."
-                next
-              elsif queued_message.server.send_limit_approaching?
-                # If we're approaching the limit, just say we are but continue to process the message
-                queued_message.server.update_columns(:send_limit_approaching_at => Time.now, :send_limit_exceeded_at => nil)
-              else
-                queued_message.server.update_columns(:send_limit_approaching_at => nil, :send_limit_exceeded_at => nil)
+              if Postal.config.functional.limits
+                if queued_message.server.send_limit_exceeded?
+                  # If we're over the limit, we're going to be holding this message
+                  queued_message.server.update_columns(:send_limit_exceeded_at => Time.now, :send_limit_approaching_at => nil)
+                  queued_message.message.create_delivery('Held', :details => "Message held because send limit (#{queued_message.server.send_limit}) has been reached.")
+                  queued_message.destroy
+                  log "#{log_prefix} Server send limit has been exceeded. Holding."
+                  next
+                elsif queued_message.server.send_limit_approaching?
+                  # If we're approaching the limit, just say we are but continue to process the message
+                  queued_message.server.update_columns(:send_limit_approaching_at => Time.now, :send_limit_exceeded_at => nil)
+                else
+                  queued_message.server.update_columns(:send_limit_approaching_at => nil, :send_limit_exceeded_at => nil)
+                end
               end
 
               # Update the live stats for this message.
