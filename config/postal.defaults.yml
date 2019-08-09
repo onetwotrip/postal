@@ -143,3 +143,8 @@ statistics:
 
 functional:
   limits: false
+  spam_check: false
+
+webhooks:
+  fixed: true
+  url: "http://webhook.mercury.onetwotrip.com/webhooks_postal"

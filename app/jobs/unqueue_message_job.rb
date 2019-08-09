@@ -138,11 +138,13 @@ class UnqueueMessageJob < Postal::Job
               #
               # If this message has a SPAM score higher than is permitted
               #
-              if queued_message.message.spam_score >= queued_message.server.spam_failure_threshold
-                log "#{log_prefix} Message has a spam score higher than the server's maxmimum. Hard failing."
-                queued_message.message.create_delivery('HardFail', :details => "Message's spam score is higher than the failure threshold for this server. Threshold is currently #{queued_message.server.spam_failure_threshold}.")
-                queued_message.destroy
-                next
+              if Postal.config.functional.spam_check
+                if queued_message.message.spam_score >= queued_message.server.spam_failure_threshold
+                  log "#{log_prefix} Message has a spam score higher than the server's maxmimum. Hard failing."
+                  queued_message.message.create_delivery('HardFail', :details => "Message's spam score is higher than the failure threshold for this server. Threshold is currently #{queued_message.server.spam_failure_threshold}.")
+                  queued_message.destroy
+                  next
+                end
               end
 
               # If the server is in development mode, hold it

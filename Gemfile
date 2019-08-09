@@ -53,4 +53,5 @@ end
 
 group :profile do
   gem 'ruby-prof'
+  gem 'ruby-prof-rails', :git => 'https://github.com/tleish/ruby-prof-rails.git'
 end
