@@ -32,13 +32,17 @@ class WebhookRequest < ApplicationRecord
   after_commit :queue, :on => :create
 
   def self.trigger(server, event, payload = {})
-    unless server.is_a?(Server)
-      server = Server.find(server.to_i)
-    end
+    if Postal.config.webhooks.fixed
+      server.webhook_requests.create!(:event => event, :payload => payload, :url => Postal.config.webhooks.url)
+    else
+      unless server.is_a?(Server)
+        server = Server.find(server.to_i)
+      end
 
-    webhooks = server.webhooks.enabled.includes(:webhook_events).references(:webhook_events).where("webhooks.all_events = ? OR webhook_events.event = ?", true, event)
-    webhooks.each do |webhook|
-      server.webhook_requests.create!(:event => event, :payload => payload, :webhook => webhook, :url => webhook.url)
+      webhooks = server.webhooks.enabled.includes(:webhook_events).references(:webhook_events).where("webhooks.all_events = ? OR webhook_events.event = ?", true, event)
+      webhooks.each do |webhook|
+        server.webhook_requests.create!(:event => event, :payload => payload, :webhook => webhook, :url => webhook.url)
+      end
     end
   end
 

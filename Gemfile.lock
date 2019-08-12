@@ -6,15 +6,6 @@ GIT
     mail (2.7.2.edge)
       mini_mime (>= 0.1.1)
 
-GIT
-  remote: https://github.com/tleish/ruby-prof-rails.git
-  revision: 1d8258eb4cd77a9687c6d9716db56be9723d5203
-  specs:
-    ruby-prof-rails (1.0.0)
-      rails (>= 3.0)
-      ruby-prof
-      ruby-prof-flamegraph
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -234,8 +225,6 @@ GEM
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
     ruby-prof (0.17.0)
-    ruby-prof-flamegraph (0.3.0)
-      ruby-prof (~> 0.13)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -315,7 +304,6 @@ DEPENDENCIES
   rspec
   rspec-rails
   ruby-prof
-  ruby-prof-rails!
   sass-rails (~> 5.0)
   secure_headers
   sentry-raven

@@ -147,4 +147,4 @@ functional:
 
 webhooks:
   fixed: true
-  url: "http://webhook.mercury.onetwotrip.com/webhooks_postal"
+  url: "http://localhost"

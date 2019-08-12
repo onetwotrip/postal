@@ -83,10 +83,3 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 end
-
-RubyProf::Rails::Config.username = "admin"
-RubyProf::Rails::Config.password = "admin123"
-RubyProf::Rails::Config.session_auth_lambda = lambda do |session|
-  session[:user_type] == :admin
-end
-RubyProf::Rails::Config.path = File.join(Rails.root, 'files', 'ruby-prof-rails')

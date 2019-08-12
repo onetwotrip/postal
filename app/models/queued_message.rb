@@ -47,7 +47,6 @@ class QueuedMessage < ApplicationRecord
   end
 
   def queue!
-    update_column(:retry_after, nil)
     queue
   end
 
