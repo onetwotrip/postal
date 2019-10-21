@@ -402,10 +402,15 @@
       </properties>
       <CLASSES>
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/chronic-0.10.2/lib" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/chronic-0.10.2/test" />
       </CLASSES>
       <SOURCES>
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/chronic-0.10.2/lib" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/chronic-0.10.2/test" />
       </SOURCES>
+      <excluded>
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/chronic-0.10.2/test" />
+      </excluded>
     </library>
     <library name="clockwork (v2.0.3, ruby-2.5.5-p157) [gem]" type="rubylib">
       <properties>
@@ -414,15 +419,18 @@
       <CLASSES>
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/bin" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/lib" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/test" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/gemfiles" />
       </CLASSES>
       <SOURCES>
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/bin" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/lib" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/test" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/gemfiles" />
       </SOURCES>
       <excluded>
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/bin" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/test" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/clockwork-2.0.3/gemfiles" />
       </excluded>
     </library>
