@@ -1890,6 +1890,31 @@
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.74.0/config" />
       </excluded>
     </library>
+    <library name="rubocop (v0.75.1, ruby-2.5.5-p157) [gem]" type="rubylib">
+      <properties>
+        <option name="version" value="4" />
+      </properties>
+      <CLASSES>
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/bin" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/exe" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/lib" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/assets" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/config" />
+      </CLASSES>
+      <SOURCES>
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/bin" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/exe" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/lib" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/assets" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/config" />
+      </SOURCES>
+      <excluded>
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/bin" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/exe" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/assets" />
+        <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/rubocop-0.75.1/config" />
+      </excluded>
+    </library>
     <library name="ruby-prof (v0.17.0, ruby-2.5.5-p157) [gem]" type="rubylib">
       <properties>
         <option name="version" value="4" />
