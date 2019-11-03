@@ -274,11 +274,13 @@
         <option name="version" value="4" />
       </properties>
       <CLASSES>
+        <root url="file://$APPLICATION_CONFIG_DIR$/rubystubs/rubystubs25/bson/4.4.2" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bson-4.4.2/ext" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bson-4.4.2/lib" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bson-4.4.2/spec" />
       </CLASSES>
       <SOURCES>
+        <root url="file://$APPLICATION_CONFIG_DIR$/rubystubs/rubystubs25/bson/4.4.2" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bson-4.4.2/ext" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bson-4.4.2/lib" />
         <root url="file://C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bson-4.4.2/spec" />
